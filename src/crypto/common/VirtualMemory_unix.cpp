@@ -145,7 +145,7 @@ void *xmrig::VirtualMemory::allocateExecutableMemory(size_t size, bool hugePages
     void *mem = nullptr;
 
     if (hugePages) {
-        mem = mmap(0, align(size), PROT_READ | PROT_WRITE | SECURE_PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS | MAP_POPULATE | hugePagesFlag(hugePageSize()), -1, 0);
+        mem = mmap(0, align(size), PROT_READ | PROT_WRITE | SECURE_PROT_EXEC, MAP_PRIVATE | MAP_ANONYMOUS | hugePagesFlag(hugePageSize()), -1, 0);
     }
 
     if (!mem) {
