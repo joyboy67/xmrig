@@ -72,6 +72,7 @@ char *xmrig::Platform::createUserAgent()
     return buf;
 }
 
+
 #ifndef XMRIG_FEATURE_HWLOC
 bool xmrig::Platform::setThreadAffinity(uint64_t cpu_id)
 {
