@@ -72,22 +72,28 @@ char *xmrig::Platform::createUserAgent()
     return buf;
 }
 
-
 #ifndef XMRIG_FEATURE_HWLOC
 bool xmrig::Platform::setThreadAffinity(uint64_t cpu_id)
 {
-    cpu_set_t mn;
-    CPU_ZERO(&mn);
-    CPU_SET(cpu_id, &mn);
+bool result;
+#if defined(FreeBSD)
+cpuset_t mn;
+CPU_ZERO(&mn);
+CPU_SET(cpu_id, &mn);
+#elif !defined(OpenBSD)
+cpu_set_t mn;
+CPU_ZERO(&mn);
+CPU_SET(cpu_id, &mn);
 
-#   ifndef __ANDROID__
-    const bool result = (pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &mn) == 0);
-#   else
-    const bool result = (sched_setaffinity(gettid(), sizeof(cpu_set_t), &mn) == 0);
-#   endif
+# if not defined(ANDROID)
+result = (pthread_setaffinity_np(pthread_self(), sizeof(cpu_set_t), &mn) == 0);
+# else
+result = (sched_setaffinity(gettid(), sizeof(cpu_set_t), &mn) == 0);
+# endif
 
-    std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    return result;
+#endif
+std::this_thread::sleep_for(std::chrono::milliseconds(1));
+return result;
 }
 #endif
 
